@@ -1,0 +1,110 @@
+---
+title: "Functions"
+output: html_document
+date: "2024-09-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(here)
+library(stringr)
+infantmortality <- read.csv(here("original","infantmortality.csv"), header=TRUE)
+maternalmortality <- read.csv(here("original","maternalmortality.csv"),header=TRUE)
+neonatalmortality <- read.csv(here("original","neonatalmortality.csv"),header=TRUE)
+under5mortality <- read.csv(here("original","under5mortality.csv"),header=TRUE)
+
+##create a function that creates dataset for all
+head(infantmortality)
+head(maternalmortality)
+head(neonatalmortality)
+head(under5mortality)
+
+
+list_mortality <- list(infantmortality, maternalmortality, neonatalmortality, under5mortality)
+lapply(list_mortality, FUN = summary)##how do you check quality exactly here??##
+
+
+
+restructured <- function(data,values_col) {
+  data %>%
+    select(Country.Name, starts_with("X")) %>%
+    pivot_longer(
+      cols = starts_with("X"),
+      names_to = "year",
+      values_to = values_col
+    ) %>%
+    mutate(year = str_remove(year, "^X")) 
+}
+maternal_cleaned <- restructured(maternalmortality,"MatMor")
+infant_cleaned <- restructured(infantmortality,"InfMor")
+neonatal_cleaned <- restructured(neonatalmortality, "NeoMor")
+under5_cleaned <- restructured(under5mortality,"Under5Mor")
+list_mortality <- list(maternal_cleaned, infant_cleaned, neonatal_cleaned, under5_cleaned)
+
+for(i in 1:4){
+  list_mortality[[i]]$mortality <- i
+}
+allmortality <- reduce(list_mortality, full_join, by = c("Country.Name", "year"))
+
+head(allmortality)
+install.packages("countrycode")
+library(countrycode)
+allmortality$ISO <- countrycode(allmortality$Country.Name,
+                            origin = "country.name",
+                            destination = "iso3c")
+allmortality <- allmortality%>%
+  select(ISO,year,MatMor,InfMor,NeoMor,Under5Mor)
+#select function works as well with minus
+ allmortality <- allmortality%>%
+  select(-Country.Name)
+write.csv(allmortality,here("original","allmortality.csv"), row.names = FALSE)
+ 
+###disaster dataset###
+disaster <- read.csv(here("original", "disaster.csv"), header = TRUE)
+filtered <- disaster%>%
+  filter(Year>=2000 & Year<=2019)%>%
+  filter(Disaster.Type=="Drought" |Disaster.Type=="Earthquake")%>%
+    mutate(drought = if_else(Disaster.Type == "Drought", 1, 0))%>%
+  mutate(earthquake=if_else(Disaster.Type=="Earthquake",1,0))
+filtered
+new <- filtered%>%
+  group_by(Year,ISO)%>%
+  summarize(drought=max(drought,na.rm=TRUE),
+            earthquake=max(earthquake,na.rm = TRUE),
+            .groups = 'drop')
+conflict <- read.csv(here("original","conflictdata.csv"), header=TRUE)
+conflict <- conflict%>%
+   group_by(year,ISO)%>%
+  summarize(total_best = sum(best, na.rm = TRUE),
+            .groups = 'drop') %>%
+  mutate(conflict_flag = if_else(total_best >= 25, 1, 0))%>%
+   arrange(ISO)%>%
+  mutate(year=year+1)
+
+
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

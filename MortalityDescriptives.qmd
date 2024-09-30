@@ -4,23 +4,208 @@ format: html
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this
+## Descriptive Statistics 
 
 ```{r}
 #| echo: false
-2 * 2
+#| label: load-packages
+#| include: false
+library(here)
+finaldata <- read.csv(here("data","finaldata.csv"))
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+The following document is an exploratory data analysis of global data from the World Bank describing conflict related mortality (i.e., maternal, neonate, under-5, and Infant mortality) between the years 2000-2019.
+
+```{r, include = FALSE}
+head(finaldata)
+range(finaldata$year)
+names(finaldata)
+suppressMessages({
+  suppressWarnings({
+    library(readr)
+    library(ggplot2)
+    library(dplyr)
+  })
+})
+distinctISO <- finaldata %>%
+  summarise(count = n_distinct(ISO))
+distinctISO
+```
+
+## There are 186 countries represented in this data
+
+The following table shows the countries with the greatest number of annual conflicts between 2000-2019...
+
+```{r fig.height = 10, fig.width = 15,echo = FALSE, warning = FALSE, message = FALSE}
+#| echo: false
+suppressMessages({
+  suppressWarnings({
+library(here)
+library(readr)
+library(ggplot2)
+library(table1)
+library(knitr)
+  })
+})
+highest_conflicts <- finaldata %>%
+  filter(conflict_flag == 1) %>% 
+  group_by(ISO) %>%         
+  summarise(conflict_count = n(), .groups = 'drop')%>%
+  arrange(desc(conflict_count))
+
+kable(highest_conflicts[1:25,],caption="Top 25 countries with the highest number of conflicts")
+
+ggplot(highest_conflicts,
+       aes(x = conflict_count,
+           y = reorder(ISO, conflict_count)
+           )
+       ) +
+  labs(
+    title = "Conflict Count by ISO Code",
+    x = "Conflict Count",                      
+    y = "ISO Code"                              
+  )+
+  geom_col()
+```
+
+## Now, let us observe the total number of conflict related deaths for each country between 2000-2019...
+
+```{r fig.height = 10, fig.width = 15,echo = FALSE, warning = FALSE, message = FALSE}
+#| echo: false
+highest_deaths <- finaldata%>%
+  group_by(ISO)%>%
+  summarise(total_best_sum =sum(total_best, na.rm = TRUE), .groups = 'drop')%>%
+  arrange(desc(total_best_sum))
+kable(highest_deaths[1:25,],caption="Top 25 countries with the highest number of conflict related deaths")
+
+```
+
+## The top 3 countries with the highest number of conflict related deaths between 2000-2019 are :
+
+1.  **Syria**
+
+2.  **Afghanistan**
+
+3.  **Iraq**
+
+```{r fig.height = 16, fig.width = 15,echo = FALSE, warning = FALSE, message = FALSE}
+#| echo: false
+highest_deaths%>%
+  filter(total_best_sum>=1)%>%
+ggplot(aes(x = total_best_sum,
+           y = reorder(ISO, total_best_sum)
+           )
+       )+
+  labs(
+    title = "Conflict Count by ISO Code",
+    x = "Conflict Count",                      
+    y = "ISO Code"                              
+  ) +
+  geom_col()
+```
+
+```{r,echo = FALSE, warning = FALSE, message = FALSE, include=FALSE}
+#| echo: false
+finaldata%>%
+summarise(totalsum =sum(total_best, na.rm = TRUE), .groups = 'drop')
+  
+```
+
+### In total there were 1343366 conflict-related deaths between 2000-2019... Before we analyze other trends, it will be worth it to analyze our data structure and missingness trends
+
+```{r, echo= FALSE, include= FALSE}
+str(finaldata)
+```
+
+**In total there are 21 variables in our dataset with the following structure:**
+
+-   Character: country_name, iSO, region
+
+-   Integer: year, OECD, OECD2023, Matmor, conflict_flag, drought, earthquake
+
+-   Numeric: gdp1000, popdens, urban, agedep, male_edu, temp, rainfall1000, InfMor, NeoMor, Under5Mor
+
+## Let's check the missingness for all our variables and identify the type of missingness
+
+Let us determine which type of missing data we have in this dataset...
+
+```{r, fig.height = 10, fig.width = 15, echo=FALSE,warning = FALSE, message = FALSE}
+library(mice)
+library(naniar)
+library(dplyr)
+mcar_test(finaldata)
+```
+
+According to this Missing Completely At Random test, there is sufficient evidence at the 5% level to suggest that our data is not MCAR. This means that our data is either missing at random or missing not at random. Let us take a closer look...
+
+```{r, fig.height = 10, fig.width = 15, include=FALSE, echo=FALSE}
+
+## R MarkdownS
+library(mice)
+library(dplyr)
+library(naniar)
+library(foreign)
+
+md.pattern(finaldata[,], rotate.names=TRUE)
+```
+
+It is apparent from the plot above that missingness is not a significant concern in our dataset with approximately **87%** not having any missing data across any of the 21 variables. Maternal mortality seems to have the highest level of missingness (413 observations, 12.9%)
+
+```{r, fig.height = 10, fig.width = 30, include= FALSE, echo=FALSE}
+library(mice)
+library(dplyr)
+library(naniar)
+library(foreign)
+gg_miss_fct(x=finaldata, fct= ISO)
+```
+
+From this plot, it is evident that some countries have complete missingness observations for maternal mortality. These countries include:
+
+-   ALB: Albania
+
+-   CIV: Côte d'Ivoire (Ivory Coast)
+
+-   MHL: Marshall Islands
+
+It may be worthwhile to look at the connectedness of missingness across various variables...
+
+```{r, echo=FALSE}
+library(mice)
+library(dplyr)
+library(naniar)
+library(foreign)
+gg_miss_upset(finaldata, nsets=n_var_miss(finaldata), nintersects= NA)
+```
+
+There seems to be two unique trends in missing values across variables— each of which show 18 separate observations of these two trends!
+
+1.  Urban, male_edu, temp, rainfall1000
+2.  Infant mortality, neonatal mortality, and under-5 mortality.
+
+# Looking at variable specific trends:
+
+Summarizing the number of conflicts and deaths by region:
+
+```{r, echo=FALSE}
+library(knitr)
+highest_mregion <- finaldata%>%
+  group_by(region)%>%
+  summarise(total_region =sum(total_best, na.rm = TRUE), .groups = 'drop')%>%
+  arrange(desc(total_region))
+kable(highest_mregion[1:17,],caption="Regions with the greatest number of conflict related deaths")
+
+```
+
+It is apparent that African regions have the greatest conflict attributed mortality in the world. Does the same trend occur with the number of conflicts observed between 2000-2019?
+
+```{r, echo=FALSE}
+library(knitr)
+highest_cregion <- finaldata%>%
+  group_by(region)%>%
+  summarise(total_cregion =sum(conflict_flag, na.rm = TRUE), .groups = 'drop')%>%
+  arrange(desc(total_cregion))
+kable(highest_cregion[1:17,],caption="Regions with the greatest number of conflicts in the world")
+
+```
+
+### Let's take a look at more specific 

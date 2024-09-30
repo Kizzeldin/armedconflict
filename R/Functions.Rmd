@@ -61,7 +61,7 @@ allmortality <- allmortality%>%
 #select function works as well with minus
  allmortality <- allmortality%>%
   select(-Country.Name)
-write.csv(allmortality,here("original","allmortality.csv"), row.names = FALSE)
+write.csv(allmortality,here("data","allmortality.csv"), row.names = FALSE)
  
 ###disaster dataset###
 disaster <- read.csv(here("original", "disaster.csv"), header = TRUE)
@@ -84,7 +84,7 @@ conflict <- conflict%>%
   mutate(conflict_flag = if_else(total_best >= 25, 1, 0))%>%
    arrange(ISO)%>%
   mutate(year=year+1)
-write.csv(conflict,here("original","conflict.csv"), row.names = FALSE)
+write.csv(conflict,here("data","conflict.csv"), row.names = FALSE)
 
 
 

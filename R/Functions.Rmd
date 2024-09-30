@@ -84,6 +84,7 @@ conflict <- conflict%>%
   mutate(conflict_flag = if_else(total_best >= 25, 1, 0))%>%
    arrange(ISO)%>%
   mutate(year=year+1)
+write.csv(conflict,here("original","conflict.csv"), row.names = FALSE)
 
 
 

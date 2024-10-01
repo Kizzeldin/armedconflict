@@ -149,7 +149,7 @@ library(foreign)
 md.pattern(finaldata[,], rotate.names=TRUE)
 ```
 
-It is apparent from the plot above that missingness is not a significant concern in our dataset with approximately **87%** not having any missing data across any of the 21 variables. Maternal mortality seems to have the highest level of missingness (413 observations, 12.9%)
+It is apparent from the plot above that missingness is not a significant concern in our dataset with approximately **87%** not having any missing data across any of the 21 variables. Maternal mortality seems to have the highest level of missingness (413 observations, 12.9%).
 
 ```{r, fig.height = 10, fig.width = 30, include= FALSE, echo=FALSE}
 library(mice)
@@ -210,7 +210,7 @@ kable(highest_cregion[1:17,],caption="Regions with the greatest number of confli
 
 ### Let's take a look at more specific types of mortality and relationships of other variables...
 
-```{r}
+```{r, echo=FALSE}
 total_dISO <- finaldata%>%
   group_by(ISO)%>%
   summarise(total_dISO =sum(drought, na.rm = TRUE), .groups = 'drop')%>%

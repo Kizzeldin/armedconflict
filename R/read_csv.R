@@ -1,5 +1,11 @@
 library(dplyr)
 library(tidyr)
+library(tidyverse)
+library(readr)
+library(here)
+library(stringr)
+library(countrycode)
+library(knitr)
 rawdat <- read.csv(here("original", "maternalmortality.csv"), header = TRUE)
 selected <- rawdat%>%
   select(Country.Name, X2000:X2019)

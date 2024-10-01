@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -348,7 +382,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <p>According to this Missing Completely At Random test, there is sufficient evidence at the 5% level to suggest that our data is not MCAR. This means that our data is either missing at random or missing not at random. Let us take a closer look…</p>
-<p>It is apparent from the plot above that missingness is not a significant concern in our dataset with approximately <strong>87%</strong> not having any missing data across any of the 21 variables. Maternal mortality seems to have the highest level of missingness (413 observations, 12.9%)</p>
+<p>It is apparent from the plot above that missingness is not a significant concern in our dataset with approximately <strong>87%</strong> not having any missing data across any of the 21 variables. Maternal mortality seems to have the highest level of missingness (413 observations, 12.9%).</p>
 <p>From this plot, it is evident that some countries have complete missingness observations for maternal mortality. These countries include:</p>
 <ul>
 <li><p>ALB: Albania</p></li>
@@ -370,6 +404,268 @@ ul.task-list li input[type="checkbox"] {
 <li>Urban, male_edu, temp, rainfall1000</li>
 <li>Infant mortality, neonatal mortality, and under-5 mortality.</li>
 </ol>
+</section>
+<section id="looking-at-variable-specific-trends" class="level1">
+<h1>Looking at variable specific trends:</h1>
+<p>Summarizing the number of conflicts and deaths by region:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Regions with the greatest number of conflict related deaths</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">region</th>
+<th style="text-align: right;">total_region</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Western Asia</td>
+<td style="text-align: right;">516770</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sub-Saharan Africa</td>
+<td style="text-align: right;">329930</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Southern Asia</td>
+<td style="text-align: right;">288238</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern Africa</td>
+<td style="text-align: right;">75563</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Latin America and the Caribbean</td>
+<td style="text-align: right;">64156</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">South-eastern Asia</td>
+<td style="text-align: right;">34948</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Eastern Europe</td>
+<td style="text-align: right;">26489</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern America</td>
+<td style="text-align: right;">3045</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Southern Europe</td>
+<td style="text-align: right;">2514</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Central Asia</td>
+<td style="text-align: right;">851</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Eastern Asia</td>
+<td style="text-align: right;">299</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Western Europe</td>
+<td style="text-align: right;">291</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Melanesia</td>
+<td style="text-align: right;">202</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern Europe</td>
+<td style="text-align: right;">68</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Australia and New Zealand</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Micronesia</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Polynesia</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>It is apparent that African regions have the greatest conflict attributed mortality in the world. Does the same trend occur with the number of conflicts observed between 2000-2019?</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Regions with the greatest number of conflicts in the world</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">region</th>
+<th style="text-align: right;">total_cregion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Sub-Saharan Africa</td>
+<td style="text-align: right;">258</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Southern Asia</td>
+<td style="text-align: right;">101</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Latin America and the Caribbean</td>
+<td style="text-align: right;">84</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Western Asia</td>
+<td style="text-align: right;">84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">South-eastern Asia</td>
+<td style="text-align: right;">67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern Africa</td>
+<td style="text-align: right;">64</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Eastern Europe</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Central Asia</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Melanesia</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Southern Europe</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Western Europe</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Eastern Asia</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Northern America</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern Europe</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Australia and New Zealand</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Micronesia</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Polynesia</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="lets-take-a-look-at-more-specific-types-of-mortality-and-relationships-of-other-variables" class="level3">
+<h3 class="anchored" data-anchor-id="lets-take-a-look-at-more-specific-types-of-mortality-and-relationships-of-other-variables">Let’s take a look at more specific types of mortality and relationships of other variables…</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>total_dISO <span class="ot">&lt;-</span> finaldata<span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ISO)<span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_dISO =</span><span class="fu">sum</span>(drought, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_dISO))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(total_dISO[<span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>,],<span class="at">caption=</span><span class="st">"Countries with the greatest most number of droughts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Countries with the greatest most number of droughts</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">ISO</th>
+<th style="text-align: right;">total_dISO</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CHN</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">THA</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">USA</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BRA</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HND</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KEN</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SOM</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BOL</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ETH</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MDG</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MOZ</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NER</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PRY</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AFG</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BDI</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GTM</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IND</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
 </section>
 
 </main>

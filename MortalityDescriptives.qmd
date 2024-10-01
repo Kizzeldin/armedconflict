@@ -208,4 +208,12 @@ kable(highest_cregion[1:17,],caption="Regions with the greatest number of confli
 
 ```
 
-### Let's take a look at more specific 
+### Let's take a look at more specific types of mortality and relationships of other variables...
+
+```{r}
+total_dISO <- finaldata%>%
+  group_by(ISO)%>%
+  summarise(total_dISO =sum(drought, na.rm = TRUE), .groups = 'drop')%>%
+  arrange(desc(total_dISO))
+kable(total_dISO[1:17,],caption="Countries with the greatest most number of droughts")
+```

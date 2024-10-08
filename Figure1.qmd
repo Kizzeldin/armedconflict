@@ -1,0 +1,47 @@
+---
+title: "Figure 1"
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+---
+
+## Figure 1. Maternal Mortality Trends
+
+Below is a graph depicting trends of maternal mortality between 2000-2017 for countries that seen an increase in maternal mortality rates across 2000 and 2017.
+
+```{r, warning=FALSE, message=FALSE}
+#| echo: false
+library(tidyverse)
+library(dplyr)
+library(knitr)
+library(xtable)
+library(here)
+library(readr)
+library(table1)
+library(Hmisc)
+##read data##
+finaldat <- read.csv(here("data", "finaldata.csv"), header = TRUE)
+trend <- finaldat %>%
+  group_by(ISO) %>%
+  summarise(
+    MatMor_2000 = MatMor[year == 2000],
+    MatMor_2017 = MatMor[year == 2017],
+    .groups = 'drop'
+  ) %>%
+  filter((MatMor_2017 - MatMor_2000) > 0)
+
+graph1 <- ggplot(finaldat %>% filter(ISO %in% trend$ISO), aes(x = year, y = MatMor, color=ISO)) + 
+  geom_line(aes(group = ISO)) + 
+  scale_y_log10() + 
+  labs(title = "Maternal Mortality Trends Between 2000-2017 by Country", 
+       x = "Year", 
+       y = "Maternal Mortality Rate (log scale)") +
+  theme_minimal()+
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )+ theme(legend.position = "right")
+
+graph1
+```

@@ -74,25 +74,3 @@ ggplot(collapsed_data, aes(x = mean_NeoMor)) +
 ggplot(collapsed_data, aes(x = mean_Under5Mor)) +
   geom_histogram(bins = 30, fill = "lightblue", color = "black", alpha = 0.7)
 
-
-trend <- anyconf %>%
-  group_by(ISO) %>%
-  summarise(
-    MatMor_2000 = MatMor[year == 2000],
-    MatMor_2017 = MatMor[year == 2017],
-    .groups = 'drop'
-  ) %>%
-  filter((MatMor_2017 - MatMor_2000) > 0)
-
-graph1 <- ggplot(anyconf %>% filter(ISO %in% trend$ISO), aes(x = year, y = MatMor, color=ISO)) + 
-  geom_line(aes(group = ISO)) + 
-  scale_y_log10() + 
-  labs(title = "Maternal Mortality Trends Between 2000-2017 by Country", 
-       x = "Year", 
-       y = "Maternal Mortality Rate (log scale)") +
-  theme_minimal()+
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold")
-  )
-
-graph1

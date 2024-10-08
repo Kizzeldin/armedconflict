@@ -21,6 +21,7 @@ library(here)
 library(readr)
 library(table1)
 library(Hmisc)
+library(ggplot2)
 ##read data##
 finaldat <- read.csv(here("data", "finaldata.csv"), header = TRUE)
 trend <- finaldat %>%

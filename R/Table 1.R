@@ -14,8 +14,7 @@ anyconf <- finaldat%>%
   mutate(any_conflict = ifelse(sum(conflict_flag[year >= 2000 & year <= 2019]) > 0, 1, 0))%>%
   ungroup()
 
-anyconf$any_conflict <- 
-  group_by(ISO)%>%
+anyconf$any_conflict <- group_by(ISO)%>%
   factor(anyconf$any_conflict, 
          levels=c(1,0),
          labels=c("Any Conflict(2000-2019)",
@@ -38,17 +37,16 @@ collapsed_data <- anyconf %>%
     mean_Under5Mor= mean(Under5Mor, na.rm = TRUE),
     mean_drought= mean(drought, na.rm = TRUE),
     mean_earthquake= mean(earthquake, na.rm = TRUE),
-    any_conflict = max(any_conflict),  # Assume any conflict is relevant for the summary
-    .groups = 'drop'  # Avoids warning messages
+    any_conflict = max(any_conflict),  
+    .groups = 'drop' 
   )
 
 collapsed_data$any_conflict <- factor(collapsed_data$any_conflict, 
                                       levels = c(1, 0),
                                       labels = c("Any Conflict (2000-2019)", 
                                                  "No Conflict (2000-2019)"))
-table1(~ mean_MatMor+ mean_InfMor+mean_NeoMor+ mean_Under5Mor+ mean_earthquake+ mean_drought+ mean_temp+ mean_rainfall+
-         mean_popdens+mean_urban+mean_agedep+ mean_maleedu+mean_gdp| 
-         any_conflict,render.continuous=c(.="Median [Min, Max]"), render.missing= NULL, data=collapsed_data,topclass="Rtable1-zebra" )
+
+##given advice by classmate to add title and header above conflict
 label(collapsed_data$mean_InfMor) <- "Infant Mortality Rate (per 1000 live births)"
 label(collapsed_data$mean_MatMor) <- "Maternal Mortality Rate (per 1000 live births)"
 label(collapsed_data$mean_NeoMor) <- "Neonatal Mortality Rate (per 1000 live births)"
@@ -62,6 +60,12 @@ label(collapsed_data$mean_maleedu) <- "Male Education"
 label(collapsed_data$mean_urban) <- "Urban"
 label(collapsed_data$mean_popdens) <- "Population density"
 label(collapsed_data$mean_agedep) <- "Age Dependency Ratio"
+
+caption  <- "Table 1.Basic statistics"
+
+table1(~ mean_MatMor+ mean_InfMor+mean_NeoMor+ mean_Under5Mor+ mean_earthquake+ mean_drought+ mean_temp+ mean_rainfall+
+         mean_popdens+mean_urban+mean_agedep+ mean_maleedu+mean_gdp| 
+         any_conflict,render.continuous=c(.="Median [Min, Max]"), caption=caption, render.missing= NULL, data=collapsed_data,topclass="Rtable1-zebra")
 
 library(ggplot2)
 # Histogram to see normal distributions, all are skewed plots 

@@ -21,3 +21,12 @@ screenreg(list(lmmod, plmmod))
 ##panel linear model omits the coefficient for each country 
 ##we also want to add fixed effects for years not only for country
 ##what does htmlreg do?? look into it, she used it instead of screenreg
+
+preds <- as.formula(" ~ armconf1 + gdp1000 + OECD + pctpopdens + urban + 
+                  agedep + male_edu + temp + rainfall1000 + earthquake + drought + 
+                  ISO + as.factor(year)")
+
+matmormod <- lm(update.formula(preds, matmor ~ .), data = finaldata)## updates the formula above to use the specified variable as outcome
+un5mormod <- lm(update.formula(preds, un5mor ~ .), data = finaldata)
+infmormod <- lm(update.formula(preds, infmor ~ .), data = finaldata)
+neomormod <- lm(update.formula(preds, neomor ~ .), data = finaldata)

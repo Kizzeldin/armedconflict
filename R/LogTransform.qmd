@@ -1,0 +1,57 @@
+---
+title: "LogTransform"
+format: pdf
+editor: visual
+---
+
+## Log Transformation of GDP
+
+Below we will log transform the variable gdp in order to provide us with an effect estimate that better aligns with our hypothesized direction.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+library(dplyr)
+library(plm)
+library(here)
+library(texreg)
+library(htmltools)
+library(tidyverse)
+library(knitr)
+library(xtable)
+library(table1)
+library(Hmisc)
+final1 <- read.csv(here("data","finaldata.csv"), header=TRUE)
+
+
+preds <- as.formula(" ~ as.factor(conflict_flag) + log(gdp1000) + OECD + popdens + urban + 
+                  agedep + male_edu + temp + rainfall1000 + earthquake + drought")
+
+matmormod <- plm(update.formula(preds, MatMor ~ .),index = c("ISO", "year"),effect = "twoways",model = "within", data = final1)
+un5mormod <- plm(update.formula(preds, Under5Mor ~ .),index = c("ISO", "year"),effect = "twoways",model = "within", data = final1)
+infmormod <- plm(update.formula(preds, InfMor ~ .),index = c("ISO", "year"),effect = "twoways",model = "within", data = final1)
+neomormod <- plm(update.formula(preds, NeoMor ~ .),index = c("ISO", "year"),effect = "twoways",model = "within", data = final1)
+
+
+label <- list("MarMor"= "Maternal Mortality",
+  "conflict_flag" = "Armed Conflict", 
+              "log(gdp1000)" = "Log GDP (1000)", 
+              "OECD" = "OECD", 
+              "popdens" = "Population Density", 
+              "urban" = "Urbanization", 
+              "agedep" = "Age Dependency", 
+              "male_edu" = "Male Education", 
+              "temp" = "Temperature", 
+              "rainfall1000" = "Rainfall", 
+              "earthquake" = "Earthquake", 
+              "drought" = "Drought")
+
+model_names <- c("Maternal Mortality", "Under-5 Mortality", "Infant Mortality", "Neonatal Mortality")
+
+h <- htmlreg(
+  list(matmormod, un5mormod, infmormod, neomormod), 
+  custom.coef.map = label,
+  custom.model.names = model_names, ci.force = TRUE)
+??htmlreg
+HTML(h)
+
+
+```

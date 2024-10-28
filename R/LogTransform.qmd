@@ -52,6 +52,4 @@ h <- htmlreg(
   custom.model.names = model_names, ci.force = TRUE)
 ??htmlreg
 HTML(h)
-
-
 ```

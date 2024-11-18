@@ -72,7 +72,9 @@ names(boot_all) <- variables
 
 print(boot_all) ###all confidence intervals
 ##there is sufficient evidence to suggest that there is 
-###median differences
+##the confidence intervals for median difference in neonatal mortality, infant mortality, and under 5 mortality 
+### of armed conflict countries in 2017 compared to coutnries without armed conflict all show significance at 5% level with
+##all CI's not passing through 0.
 bootneomedian
 bootinfmedian
 bootunmedian
